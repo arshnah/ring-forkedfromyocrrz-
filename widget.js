@@ -1,5 +1,5 @@
 (async () => {
-    const DATA_URL = "";
+    const DATA_URL = "https://yocrrz.is-a.dev/ring/members.json";
 
     // Prevent duplicate widgets
     if (document.getElementById("devring-widget")) return;
