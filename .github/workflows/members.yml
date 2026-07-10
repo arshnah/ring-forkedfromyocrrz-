@@ -1,0 +1,39 @@
+name: Validate Members
+
+on:
+  push:
+    paths:
+      - "members/**"
+
+  pull_request:
+    paths:
+      - "members/**"
+
+jobs:
+  validate:
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: node scripts/generate-index.js
+
+      - name: Commit updated index
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+          git add members/index.json
+
+          git diff --cached --quiet || git commit -m "Update members index"
+
+          git push

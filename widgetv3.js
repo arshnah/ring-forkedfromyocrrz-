@@ -1,12 +1,24 @@
 (async () => {
-    const DATA_URL = "https://yocrrz.is-a.dev/ring/members.json";
-    const HOME_URL = "https://yocrrz.is-a.dev/ring";
+    const BASE = "https://yocrrz.is-a.dev/ring";
+    const HOME_URL = BASE;
 
     if (document.getElementById("devring-widget")) return;
 
     try {
-        const res = await fetch(DATA_URL);
-        const members = await res.json();
+
+        // Fetch the generated index
+        const files = await fetch(`${BASE}/members/index.json`, {
+            cache: "no-cache"
+        }).then(r => r.json());
+
+        // Fetch every member JSON
+        const members = await Promise.all(
+            files.map(file =>
+                fetch(`${BASE}/members/${file}`, {
+                    cache: "no-cache"
+                }).then(r => r.json())
+            )
+        );
 
         const host = location.hostname.replace(/^www\./, "");
 
@@ -20,7 +32,6 @@
         const prev = members[(index - 1 + members.length) % members.length];
         const next = members[(index + 1) % members.length];
         const random = members[Math.floor(Math.random() * members.length)];
-
         const style = document.createElement("style");
 
         style.textContent = `
